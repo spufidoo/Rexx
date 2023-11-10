@@ -1,0 +1,29 @@
+/* REXX *************************************************************/
+/* EXEC - EDIT MACRO TO EXECUTE CURRENT MEMBER BEING EDITED         */
+/* It reads the member and dynamically allocates an EXEC library    */
+/* meaning, no changes have to be saved first.                      */
+/* Kind of a "failsafe", "do my changes work?" thing.               */
+/********************************************************************/
+"ISREDIT MACRO (PARM)"
+"ISREDIT (LINECNT) = LINENUM .ZLAST"
+IF RC > 0 THEN EXIT
+"ISREDIT (MEMNAME) = MEMBER"
+IF MEMNAME = "" THEN MEMNAME = "TEMPMEM"
+X = LISTDSI("SYSPROC FILE")
+RECFM = LEFT(SYSRECFM"F",1)
+EXCLIB = "##"TIME("S")
+"ALLOC F("EXCLIB")NEW RECFM("RECFM "B) LRECL("SYSLRECL") SPACE(10) CYL",
+  "DSORG(PO) DIR(10) DELETE REUSE"
+"ISPEXEC LMINIT DATAID(EXCLIBID) DDNAME("EXCLIB") ENQ(SHRW)"
+"ISPEXEC LMOPEN DATAID("EXCLIBID") OPTION(OUTPUT)"
+DO LINENUM = 1 TO LINECNT
+  "ISREDIT (CURLINE) = LINE "LINENUM
+  "ISPEXEC LMPUT DATAID("EXCLIBID") MODE(INVAR)",
+  "DATALOC(CURLINE) DATALEN("SYSLRECL")"
+END
+"ISPEXEC LMMREP DATAID("EXCLIBID") MEMBER("MEMNAME")"
+"ISPEXEC LMFREE DATAID("EXCLIBID")"
+"ALTLIB ACTIVATE APPLICATION(CLIST) FILE("EXCLIB")"
+"ISPEXEC SELECT CMD(%"MEMNAME PARM")"
+"ALTLIB DEACTIVATE APPLICATION(CLIST)"
+"FREE F("EXCLIB")"
