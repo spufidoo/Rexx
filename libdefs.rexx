@@ -1,5 +1,5 @@
 /* Rexx */
-/* This is a demonstration of how you can code ISPF dialog 
+/* This is a demonstration of how you can code ISPF dialog
    panels, messages, skeletons, etc. INSIDE your Rexx, so that you
    don't have to keep them all in separate libraries and refresh them,
    every time you want to change something.
@@ -23,14 +23,14 @@ Exit
  
 /*********************************************************************
   This procedure reads the source of the Rexx using the sourceline()
-  function. It looks for the comment "/*MEMBER" at the first byte of 
-  a line, reads the lines that follow until an end comment "*/" in
-  byte 1, and puts the lot into a member of a temporary data set. 
-  The member name is specified after the "/*MEMBER" comment.
+  function. It looks for the comment "MEMBER name" at the first byte of
+  a line, reads the lines that follow until an end comment in
+  byte 1, and puts the lot into a member of a temporary data set.
+  The member name is specified after the "MEMBER" comment.
   Once all members have been parsed, the temporary data set is
   allocated to the ISPF standard DDs.
-**********************************************************************/  
-setup_libdefs: Procedure Expose ddname 
+**********************************************************************/
+setup_libdefs: Procedure Expose ddname
 ddname = '$'right(time(s),7,'0')     /* create unique ddname         */
 Address tso 'ALLOC NEW DEL F('ddname') DIR(20) SP(30) TR RECF(F B)
              BLKS(0) LRECL(80) REU'  /* Allocate data set            */
